@@ -2,7 +2,7 @@ Installation
 ============
 This package is generated using setuptools and requires 'tox' for environment management, 'nose' for testing, 'coverage' for coverage and 'sphinx' for documentation. 
 
-The full package and source code can be pulled/cloned from __ https://github.com/HogRoast/shimbase.
+The full package and source code can be pulled/cloned from https://github.com/HogRoast/shimbase.
 
 Once pulled, install dependencies and create a distribution by running the following from the root directory...
 

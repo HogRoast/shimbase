@@ -1,14 +1,9 @@
-import pprint
-
-SCHEMA='../db/createdb.sql'
+import pprint, sys
+from configparser import ConfigParser
 
 SRC_IN='./dbosrc.tmpl'
 TEST_IN='./dbotest.tmpl'
 DATA_IN='./dbodata.tmpl'
-
-SRC_OUT='../{}.py'
-TEST_OUT='../tests/test_{}.py'
-DATA_OUT='../db/{}_data.sql'
 
 PK_GETTER_TMPL = 'def get{}(self):\n    return self._keys.{}\n\n'
 VALS_GETTER_TMPL = 'def get{}(self):\n    return self._vals.{}\n\n'
@@ -271,9 +266,15 @@ def createReplacements(table, fields):
 
     return replacements
 
-def generateDBO():
+def generateDBO(iniFileName:str):
+    cp = ConfigParser()
+    # maintain case of ini file keys
+    cp.optionxform = lambda option: option
+    cp.read(iniFileName)
+    cfg = cp['base']
+
     # Open the database schema
-    with open(SCHEMA, 'r') as dbFile:
+    with open(cfg['schema'], 'r') as dbFile:
         for row in dbFile:
             # Find CREATE TABLE commands
             if 'CREATE TABLE' in row:
@@ -338,9 +339,15 @@ def generateDBO():
                
                 # Create Template pattern replacements
                 replacements = createReplacements(table, fields)
-                createFile(SRC_IN, SRC_OUT.format(table), replacements)
-                createFile(TEST_IN, TEST_OUT.format(table), replacements)
-                createFile(DATA_IN, DATA_OUT.format(table), replacements)
+                createFile(SRC_IN, '{}{}.py'.format( \
+                        cfg['srcOutPath'], table), replacements)
+                createFile(TEST_IN, '{}test_{}.py'.format( \
+                        cfg['testOutPath'], table), replacements)
+                createFile(DATA_IN, '{}{}_data.sql'.format( \
+                        cfg['dataOutPath'], table), replacements)
 
 if __name__ == '__main__':
-    generateDBO()
+    ''' 
+    gendbo <iniFileName>
+    '''
+    generateDBO(sys.argv[1])

@@ -1,6 +1,6 @@
 Overview
 ========
-An object oriented database abstraction library. The aim is to provide a simple library for manipulating relational database tables via python objects. The abstraction should allow for any relational database implementation (e.g. SQLite3) to be 'plugged in' meaning application code can be written in a database independent fashion.
+An object oriented database abstraction library. The aim is to provide a simple library for manipulating relational database tables via python objects. The abstraction should allow for any relational database implementation (e.g. SQLite3) to be plugged in, meaning application code can be written in a database independent fashion.
 
 The library has been built to be as generic as possible, however the only implementation provided currently is for SQLite3 so there may be a slight leaning towards this implementation. This will be ironed out as more implementations are added.
 
@@ -10,7 +10,7 @@ Installation
 ============
 This package is generated using setuptools and requires 'tox' for environment management, 'nose' for testing, 'coverage' for coverage and 'sphinx' for documentation. 
 
-The full package and source code can be pulled/cloned from __ https://github.com/HogRoast/shimbase.
+The full package and source code can be pulled/cloned from https://github.com/HogRoast/shimbase.
 
 Once pulled, install dependencies and create a distribution by running the following from the root directory...
 
@@ -44,7 +44,21 @@ Usage
 =====
 The main class (*database.Database*) provides the database interface; it is required to be constructed with a valid implementation object (a sub-class of *dbimpl.DatabaseImpl*). 
 
-A generator application (*gendbo.py*) is provided that will create DatabaseObjects for each new table in the schema file (*createdb.sql*). Also provided is a test database (*test.db*) for the purposes of unit testing.
+A generator application (*gendbo.py* & *gendbo.ini*) is provided that will create DatabaseObjects for each new table in the schema file (*createdb.sql*). Also provided is a test database (*test.db*) for the purposes of unit testing.
+
+To create the test DatabaseObjects run the following from the templates directory...
+
+::
+
+    python gendbo.py gendbo.ini
+
+To create your own DatabaseObjects you will need to create the following...
+
+    * a configuration file similar to *gendbo.ini*
+    * a database schema file similar to *create_db.dql*
+    * modify the content of the configuration file to point to your schema file and the paths for your DatabaseObjects .py, .sql and test files.
+
+Once this is done you can execute *gendbo.py*  but providing your own configuration file as argument, the DatabaseObject files will be generated in the paths you have specified.
 
 Package Structure
 ==================
@@ -73,6 +87,7 @@ Package Structure
     |   |   |- dbsrc.tmpl
     |   |   |- dbodata.tmpl
     |   |   |- dbotest.tmpl
+    |   |   |- gendbo.ini
     |   |   |- gendbo.py
     |   |- tests
     |   |   |- coverage
@@ -84,3 +99,4 @@ Package Structure
     |- LICENSE.txt
     |- readme.md
     |- setup.py
+

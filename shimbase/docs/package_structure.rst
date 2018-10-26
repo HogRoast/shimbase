@@ -25,6 +25,7 @@ Package Structure
     |   |   |- dbsrc.tmpl
     |   |   |- dbodata.tmpl
     |   |   |- dbotest.tmpl
+    |   |   |- gendbo.ini
     |   |   |- gendbo.py
     |   |- tests
     |   |   |- coverage
@@ -36,3 +37,4 @@ Package Structure
     |- LICENSE.txt
     |- readme.md
     |- setup.py
+
