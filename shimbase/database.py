@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from itertools import chain
 from abc import ABC, abstractmethod
-from dbimpl import DatabaseImpl
+from shimbase.dbimpl import DatabaseImpl
 
 class DatabaseInvObjError(Exception):
     '''

@@ -6,8 +6,8 @@ from unittest import TestCase
 from unittest.mock import MagicMock, call
 from dataclasses import FrozenInstanceError
 from {{TableName}} import {{CapTableName}}, {{CapTableName}}Keys, {{CapTableName}}Values
-from database import Database, AdhocKeys
-from sqlite3impl import SQLite3Impl
+from shimbase.database import Database, AdhocKeys
+from shimbase.sqlite3impl import SQLite3Impl
 
 class Test{{CapTableName}}(TestCase):
     """{{CapTableName}} object tests"""

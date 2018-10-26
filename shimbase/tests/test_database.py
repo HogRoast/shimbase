@@ -4,9 +4,10 @@ import os
 from datetime import datetime
 from unittest import TestCase
 from unittest.mock import MagicMock, call
-from database import Database, DatabaseObject, DatabaseInvObjError, AdhocKeys
-from dbimpl import DatabaseDataError, DatabaseIntegrityError
-from sqlite3impl import SQLite3Impl
+from shimbase.database import Database, DatabaseObject, DatabaseInvObjError, \
+        AdhocKeys
+from shimbase.dbimpl import DatabaseDataError, DatabaseIntegrityError
+from shimbase.sqlite3impl import SQLite3Impl
 from foo import Foo
 from bar import Bar
 

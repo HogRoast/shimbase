@@ -1,5 +1,6 @@
 from sqlite3 import connect, IntegrityError
-from dbimpl import DatabaseDataError, DatabaseIntegrityError, DatabaseImpl
+from shimbase.dbimpl import DatabaseDataError, DatabaseIntegrityError, \
+        DatabaseImpl
 
 class SQLite3Impl(DatabaseImpl):
     '''

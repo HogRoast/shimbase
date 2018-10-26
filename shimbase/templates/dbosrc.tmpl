@@ -1,5 +1,6 @@
 from dataclasses import dataclass
-from database import DatabaseObject, DatabaseKeys, DatabaseValues, AdhocKeys
+from shimbase.database import DatabaseObject, DatabaseKeys, DatabaseValues, \
+        AdhocKeys
 
 @dataclass(frozen=True)
 class {{CapTableName}}Keys(DatabaseKeys):

@@ -4,8 +4,8 @@ import os
 from datetime import datetime
 from unittest import TestCase
 from unittest.mock import MagicMock, call
-from sqlite3impl import SQLite3Impl
-from dbimpl import DatabaseDataError, DatabaseIntegrityError
+from shimbase.sqlite3impl import SQLite3Impl
+from shimbase.dbimpl import DatabaseDataError, DatabaseIntegrityError
 
 class TestSQLite3Impl(TestCase):
     """SQLite3Impl tests"""
