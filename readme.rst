@@ -82,13 +82,13 @@ Package Structure
     |   |   |- package_structure.rst
     |   |   |- usage.rst
     |   |   |- ...
+    |   |- gendbo.ini
+    |   |- gendbo.py
     |   |- sqlite3impl.py
     |   |- templates
     |   |   |- dbsrc.tmpl
     |   |   |- dbodata.tmpl
     |   |   |- dbotest.tmpl
-    |   |   |- gendbo.ini
-    |   |   |- gendbo.py
     |   |- tests
     |   |   |- coverage
     |   |   |   |- ...

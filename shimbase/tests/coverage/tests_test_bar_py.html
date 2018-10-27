@@ -286,7 +286,7 @@
 <p id="t16" class="stm run hide_run">    <span class="op">@</span><span class="nam">classmethod</span><span class="strut">&nbsp;</span></p>
 <p id="t17" class="pln">    <span class="key">def</span> <span class="nam">setUpClass</span><span class="op">(</span><span class="nam">cls</span><span class="op">)</span><span class="op">:</span><span class="strut">&nbsp;</span></p>
 <p id="t18" class="stm run hide_run">        <span class="nam">createName</span> <span class="op">=</span> <span class="str">'./db/createdb.sql'</span><span class="strut">&nbsp;</span></p>
-<p id="t19" class="stm run hide_run">        <span class="nam">testDataName</span> <span class="op">=</span> <span class="str">'./db/*_data.sql'</span><span class="strut">&nbsp;</span></p>
+<p id="t19" class="stm run hide_run">        <span class="nam">testDataName</span> <span class="op">=</span> <span class="str">'./db/'</span> <span class="op">+</span> <span class="str">'*_data.sql'</span><span class="strut">&nbsp;</span></p>
 <p id="t20" class="stm run hide_run">        <span class="nam">dbName</span> <span class="op">=</span> <span class="str">'./db/test.db'</span><span class="strut">&nbsp;</span></p>
 <p id="t21" class="stm run hide_run">        <span class="nam">os</span><span class="op">.</span><span class="nam">system</span><span class="op">(</span><span class="str">'cat {} | sqlite3 {}'</span><span class="op">.</span><span class="nam">format</span><span class="op">(</span><span class="nam">createName</span><span class="op">,</span> <span class="nam">dbName</span><span class="op">)</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
 <p id="t22" class="stm run hide_run">        <span class="nam">os</span><span class="op">.</span><span class="nam">system</span><span class="op">(</span><span class="str">'cat {} | sqlite3 {}'</span><span class="op">.</span><span class="nam">format</span><span class="op">(</span><span class="nam">testDataName</span><span class="op">,</span> <span class="nam">dbName</span><span class="op">)</span><span class="op">)</span><span class="strut">&nbsp;</span></p>
@@ -476,7 +476,7 @@
     <div class="content">
         <p>
             <a class="nav" href="index.html">&#xab; index</a> &nbsp; &nbsp; <a class="nav" href="https://coverage.readthedocs.io">coverage.py v4.5.1</a>,
-            created at 2018-10-27 00:30
+            created at 2018-10-27 10:36
         </p>
     </div>
 </div>

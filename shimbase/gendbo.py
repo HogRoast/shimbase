@@ -1,9 +1,9 @@
 import pprint, sys
 from configparser import ConfigParser
 
-SRC_IN='./dbosrc.tmpl'
-TEST_IN='./dbotest.tmpl'
-DATA_IN='./dbodata.tmpl'
+SRC_IN='./templates/dbosrc.tmpl'
+TEST_IN='./templates/dbotest.tmpl'
+DATA_IN='./templates/dbodata.tmpl'
 
 PK_GETTER_TMPL = 'def get{}(self):\n    return self._keys.{}\n\n'
 VALS_GETTER_TMPL = 'def get{}(self):\n    return self._vals.{}\n\n'
@@ -30,11 +30,14 @@ def createFile(tmplFilename, outFilename, replacements):
                     row = row.replace(r, s)
             outFile.write(row)
 
-def createReplacements(table, fields):
+def createReplacements(table, fields, schema, dataOutPath, libName=''):
     print('Creating replacements for...', table)
     pprint.pprint(fields, indent=4)
 
     replacements = {}
+    replacements['{{Schema}}'] = "'" + schema + "'"
+    replacements['{{DataOutPath}}'] = "'" + dataOutPath + "'"
+    replacements['{{LibName}}'] = libName + '.' if len(libName) > 0 else ''
     replacements['{{TableName}}'] = table
     replacements['{{CapTableName}}'] = table.title()
 
@@ -270,6 +273,7 @@ def generateDBO(iniFileName:str):
     cp = ConfigParser()
     # maintain case of ini file keys
     cp.optionxform = lambda option: option
+    print(iniFileName)
     cp.read(iniFileName)
     cfg = cp['base']
 
@@ -338,7 +342,8 @@ def generateDBO(iniFileName:str):
                         fields[f][1] = True
                
                 # Create Template pattern replacements
-                replacements = createReplacements(table, fields)
+                replacements = createReplacements(table, fields, \
+                        cfg['schema'], cfg['dataOutPath'], cfg['dboLibName'])
                 createFile(SRC_IN, '{}{}.py'.format( \
                         cfg['srcOutPath'], table), replacements)
                 createFile(TEST_IN, '{}test_{}.py'.format( \

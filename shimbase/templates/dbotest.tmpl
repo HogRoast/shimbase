@@ -5,7 +5,7 @@ from datetime import datetime
 from unittest import TestCase
 from unittest.mock import MagicMock, call
 from dataclasses import FrozenInstanceError
-from {{TableName}} import {{CapTableName}}, {{CapTableName}}Keys, {{CapTableName}}Values
+from {{LibName}}{{TableName}} import {{CapTableName}}, {{CapTableName}}Keys, {{CapTableName}}Values
 from shimbase.database import Database, AdhocKeys
 from shimbase.sqlite3impl import SQLite3Impl
 
@@ -15,8 +15,8 @@ class Test{{CapTableName}}(TestCase):
 
     @classmethod
     def setUpClass(cls):
-        createName = './db/createdb.sql' 
-        testDataName = './db/*_data.sql' 
+        createName = {{Schema}}
+        testDataName = {{DataOutPath}} + '*_data.sql' 
         dbName = './db/test.db'
         os.system('cat {} | sqlite3 {}'.format(createName, dbName))
         os.system('cat {} | sqlite3 {}'.format(testDataName, dbName))
