@@ -10,5 +10,5 @@ Modules
 .. automodule:: sqlite3impl
    :members:
 
-.. automodule:: templates.gendbo
+.. automodule:: gendbo
    :members:

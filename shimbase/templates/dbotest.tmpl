@@ -40,25 +40,15 @@ class Test{{CapTableName}}(TestCase):
         self.assertIn('cannot assign to field', cm.exception.args[0])
 
     def test_keys_adhoc(self):
-        l = {{CapTableName}}.createAdhoc(AdhocKeys(None))
+        l = {{CapTableName}}.createAdhoc(None)
         self.assertEqual(l.getTable(), '{{TableName}}')
         self.assertTrue(l._keys.getFields() is None)
 
-    def test_createSingle(self):
-        obj = {{CapTableName}}.createSingle(({{AllTestDataList}}))
+    def test_create(self):
+        obj = {{CapTableName}}.create(({{AllTestDataList}}))
 
         {{PKTestDataAssertEqual}} 
         {{ValueTestDataAssertEqual}} 
-
-    def test_createMulti(self):
-        rows = [{{AllTestDataRows}}]
-        objs = {{CapTableName}}.createMulti(rows)
-        
-        self.assertEqual(len(objs), 2)
-        {{PKTestDataAssertEqualIdx0}}
-        {{ValueTestDataAssertEqualIdx0}}
-        {{PKTestDataAssertEqualIdx1}}
-        {{ValueTestDataAssertEqualIdx1}}
 
     def test_repr(self):
         obj = {{CapTableName}}({{AllTestDataList}})
@@ -77,7 +67,7 @@ class Test{{CapTableName}}(TestCase):
         {{PKTestDataAssertEqualIdx0}}
         {{ValueTestDataAssertEqualIdx0}}
 
-        objs = Test{{CapTableName}}.db.select({{CapTableName}}.createAdhoc(AdhocKeys({{ValueTestDataDict}})))
+        objs = Test{{CapTableName}}.db.select({{CapTableName}}.createAdhoc({{ValueTestDataDict}}))
         self.assertEqual(len(objs), 1)
         {{PKTestDataAssertEqualIdx0}}
         {{ValueTestDataAssertEqualIdx0}}

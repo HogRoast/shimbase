@@ -97,35 +97,24 @@ class DatabaseObject(ABC):
         self._vals = values
 
     @abstractmethod
-    def _createAdhoc(self, keys:AdhocKeys):
+    def _createAdhoc(self, fields:dict):
         '''
         Abstract instance method to create a database object with the 
-        provided adhoc keys list
+        provided dictionary of fields
 
-        :param keys: an AdhocKeys object
-        :returns: a League object constructed via the primary key
+        :param keys: a dictionary of adhoc fields
+        :returns: a database object constructed via an AdhocKey of fields
         '''
         pass
 
     @abstractmethod
-    def _createSingle(cls, row:tuple):
+    def _create(cls, row:tuple):
         '''
         Abstract instance method to create a database object from the provided 
         database row
 
         :param row: a list of values representing the objects key and values
-        :returns: a League object constructed from row
-        '''
-        pass
-
-    @abstractmethod
-    def _createMulti(cls, rows:tuple):
-        '''
-        Abstract instance method to create database objects from the provided 
-        database rows
-
-        :param rows: a list of lists of representing object keys and values
-        :returns: a list of League objects constructed from rows
+        :returns: a database object constructed from row
         '''
         pass
 
@@ -211,7 +200,7 @@ class Database:
         :raises: DatabaseInvObjError if obj is not a valid DBO
         '''
         rows = self._impl.select(obj._table, obj._keys.getFields())
-        return obj.createMulti(rows)
+        return [obj._create(r) for r in rows]
 
     @isDatabaseObject
     def upsert(self, obj:DatabaseObject):

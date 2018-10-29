@@ -80,8 +80,6 @@ class SQLite3Impl(DatabaseImpl):
         :param where: a dictionary of where clauses, k=v and k1=v1...
         :raises: DatabaseDataError if no updates
         '''
-        print(updates)
-        print(where)
         if updates is None or len(updates) == 0:
             raise DatabaseDataError('No values provided for UPDATE')
         

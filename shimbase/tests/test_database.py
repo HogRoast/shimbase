@@ -50,8 +50,7 @@ class TestDatabase(TestCase):
         self.assertEqual(
                 str(bars[0]), "bar : Keys {'id': 98} : Values {'heading': 98, 'speed': 2.3, 'signal': 'X'}")
 
-        bars = TestDatabase.db.select(
-                Bar.createAdhoc(AdhocKeys({'signal': 'Z'})))
+        bars = TestDatabase.db.select(Bar.createAdhoc({'signal': 'Z'}))
         self.assertEqual(len(bars), 1)
         self.assertEqual(
                 str(bars[0]), "bar : Keys {'id': 99} : Values {'heading': 99, 'speed': 2.4, 'signal': 'Z'}")

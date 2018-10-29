@@ -1,6 +1,5 @@
 from dataclasses import dataclass
-from shimbase.database import DatabaseObject, DatabaseKeys, DatabaseValues, \
-        AdhocKeys
+from shimbase.database import DatabaseObject, DatabaseKeys, DatabaseValues, AdhocKeys
 
 @dataclass(frozen=True)
 class {{CapTableName}}Keys(DatabaseKeys):
@@ -56,31 +55,30 @@ class {{CapTableName}}(DatabaseObject):
     '''
 
     @classmethod
-    def createAdhoc(cls, keys:AdhocKeys):
+    def createAdhoc(cls, fields:dict):
         '''
-        Class method to create a database object with the provided adhoc keys
-        list
+        Class method to create a database object with the provided adhoc 
+        dictionary of fields
 
-        :param keys: an AdhocKeys object
-        :returns: a {{CapTableName}} object constructed via the provided key
-        :raises: None
+        :param keys: a dictionary of fields
+        :returns: {{CapTableName}} object constructed via an AdhocKey of fields
         '''
         l = {{CapTableName}}()
-        l._keys = keys
+        l._keys = AdhocKeys(fields) 
         return l
 
-    def _createAdhoc(self, keys:AdhocKeys):
+    def _createAdhoc(self, fields:dict):
         '''
         Private instance method to create a database object with the 
-        provided adhoc keys list
+        provided adhoc fields
 
-        :param keys: an AdhocKeys object
-        :returns: a League object constructed via the provided key
+        :param keys: a dictionary of fields
+        :returns: {{CapTableName}} object constructed via an AdhocKey of fields
         '''
         return {{CapTableName}}.createAdhoc(keys)
 
     @classmethod
-    def createSingle(cls, row:tuple):
+    def create(cls, row:tuple):
         '''
         Class method to create a database object from the provided database row
 
@@ -90,7 +88,7 @@ class {{CapTableName}}(DatabaseObject):
         {{AllFieldsList}} = row
         return {{CapTableName}}({{AllFieldsList}})
 
-    def _createSingle(cls, row:tuple):
+    def _create(self, row:tuple):
         '''
         Private instance method to create a database object from the provided 
         database row
@@ -98,30 +96,7 @@ class {{CapTableName}}(DatabaseObject):
         :param row: a list of values representing the objects key and values
         :returns: a {{CapTableName}} object constructed from row
         '''
-        return {{CapTableName}}.createSingle(row)
-
-    @classmethod
-    def createMulti(cls, rows:tuple):
-        '''
-        Class method to create database objects from the provided database rows
-
-        :param rows: a list of lists of representing object keys and values
-        :returns: a list of {{CapTableName}} objects constructed from rows
-        '''
-        l = []
-        for r in rows:
-            l.append(cls.createSingle(r))
-        return l
-
-    def _createMulti(cls, rows:tuple):
-        '''
-        Private instance method to create database objects from the provided 
-        database rows
-
-        :param rows: a list of lists of representing object keys and values
-        :returns: a list of {{CapTableName}} objects constructed from rows
-        '''
-        return {{CapTableName}}.createMulti(rows)
+        return {{CapTableName}}.create(row)
 
     def __init__(self, {{AllFieldsListTypedAndDef}}):
         '''
