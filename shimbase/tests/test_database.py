@@ -55,6 +55,27 @@ class TestDatabase(TestCase):
         self.assertEqual(
                 str(bars[0]), "bar : Keys {'id': 99} : Values {'heading': 99, 'speed': 2.4, 'signal': 'Z'}")
 
+    def test_select_Ordered(self):
+        bars = TestDatabase.db.select(Bar.createAdhoc(order=('>id',)))
+        self.assertEqual(len(bars), 2)
+        self.assertEqual(
+                str(bars[0]), "bar : Keys {'id': 99} : Values {'heading': 99, 'speed': 2.4, 'signal': 'Z'}")
+        self.assertEqual(
+                str(bars[1]), "bar : Keys {'id': 98} : Values {'heading': 98, 'speed': 2.3, 'signal': 'X'}")
+
+        with TestDatabase.db.transaction() as t:
+            TestDatabase.db.upsert(Bar(101, 180, 33.5, 'A'))
+            bars = TestDatabase.db.select(Bar.createAdhoc(order=('signal',)))
+            self.assertEqual(len(bars), 3)
+            self.assertEqual(
+                    str(bars[0]), "bar : Keys {'id': 101} : Values {'heading': 180, 'speed': 33.5, 'signal': 'A'}")
+            self.assertEqual(
+                    str(bars[1]), "bar : Keys {'id': 98} : Values {'heading': 98, 'speed': 2.3, 'signal': 'X'}")
+            self.assertEqual(
+                    str(bars[2]), "bar : Keys {'id': 99} : Values {'heading': 99, 'speed': 2.4, 'signal': 'Z'}")
+            t.fail()
+
+
     def test_foreign_key(self):
         with TestDatabase.db.transaction(), \
                 self.assertRaises(DatabaseIntegrityError) as cm:

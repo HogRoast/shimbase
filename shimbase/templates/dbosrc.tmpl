@@ -55,27 +55,31 @@ class {{CapTableName}}(DatabaseObject):
     '''
 
     @classmethod
-    def createAdhoc(cls, fields:dict):
+    def createAdhoc(cls, fields:dict={}, order:tuple=None):
         '''
         Class method to create a database object with the provided adhoc 
         dictionary of fields
 
-        :param keys: a dictionary of fields
+        :param fields: a dictionary of fields
+        :param order: a tuple of fields to order by, if prepended with '>' or \
+                      '<' then desc or asc
         :returns: {{CapTableName}} object constructed via an AdhocKey of fields
         '''
         l = {{CapTableName}}()
-        l._keys = AdhocKeys(fields) 
+        l._keys = AdhocKeys(fields, order) 
         return l
 
-    def _createAdhoc(self, fields:dict):
+    def _createAdhoc(self, fields:dict={}, order:tuple=None):
         '''
         Private instance method to create a database object with the 
         provided adhoc fields
 
-        :param keys: a dictionary of fields
+        :param fields: a dictionary of fields
+        :param order: a tuple of fields to order by, if prepended with '>' or \
+                      '<' then desc or asc
         :returns: {{CapTableName}} object constructed via an AdhocKey of fields
         '''
-        return {{CapTableName}}.createAdhoc(keys)
+        return {{CapTableName}}.createAdhoc(fields, order)
 
     @classmethod
     def create(cls, row:tuple):

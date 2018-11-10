@@ -355,4 +355,7 @@ if __name__ == '__main__':
     ''' 
     gendbo <iniFileName>
     '''
-    generateDBO(sys.argv[1])
+    if len(sys.argv) == 2:
+        generateDBO(sys.argv[1])
+    else:
+        print('Usage - python gendbo.py <file.ini>')

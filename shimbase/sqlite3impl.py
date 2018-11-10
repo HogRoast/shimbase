@@ -15,18 +15,20 @@ class SQLite3Impl(DatabaseImpl):
         self._dbname = dbname
         self._conn = connect(dbname)
 
-    def select(self, table:str, where:dict = None):
+    def select(self, table:str, where:dict=None, order:tuple=None):
         '''
         Select from db the row(s) matching the provided fields or all rows if
         fields are None
 
         :param table: the table name to select from
         :param where: a dictionary of where clauses, k=v and k1=v1...
+        :param order: a tuple of fields to order by, prepended '>' or '<' \
+                      means desc or asc
         :returns: a list of rows from table
         :raises: None
         '''
         s = 'SELECT * FROM {} '.format(table)
-        if where and len(where) > 0:
+        if where:
             s += 'WHERE '
             for k, v in where.items():
                 if v is None:
@@ -37,7 +39,20 @@ class SQLite3Impl(DatabaseImpl):
                     s += '{}={} and '.format(k, v) 
             # remove the extraneous ' and '
             s = s[:-5]
-   
+
+        if order:
+            s += 'ORDER BY '
+            for o in order:
+                if len(o):
+                    if o[0] == '>':
+                        s += '{} DESC, '.format(o[1:])
+                    elif o[0] == '<':
+                        s += '{} ASC, '.format(o[1:])
+                    else:
+                        s += '{} ASC, '.format(o)
+            # remove the extraneous ', '
+            s = s[:-2]
+
         return self.execute(s)
 
     def insert(self, table:str, inserts:dict):
@@ -118,7 +133,7 @@ class SQLite3Impl(DatabaseImpl):
         :param where: a dictionary of where clauses, k=v and k1=v1...
         '''
         s = 'DELETE FROM {} '.format(table)
-        if where and len(where) > 0:
+        if where:
             s += 'WHERE '
             for k, v in where.items():
                 if v is None:
@@ -145,7 +160,7 @@ class SQLite3Impl(DatabaseImpl):
         curs = self._conn.cursor()
 
         try:
-            #print(s)
+            print(s)
             curs.execute(s)
         except IntegrityError as e:
             raise DatabaseIntegrityError(e.args[0])

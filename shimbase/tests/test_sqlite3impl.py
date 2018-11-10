@@ -51,7 +51,46 @@ class TestSQLite3Impl(TestCase):
         self.assertEqual(len(rows), 1)
         self.assertEqual(
                 rows[0], ('foo name TD', 'foo desc TD', 98))
-  
+
+    def test_select_Ordered(self):
+        rows = TestSQLite3Impl.db.select('foo', {}, ('>bar_id',))    
+
+        self.assertEqual(len(rows), 2)
+        self.assertEqual(rows[0], ( \
+                'foo name TD2', 'foo desc TD2', 99))
+        self.assertEqual(rows[1], ( \
+                'foo name TD', 'foo desc TD', 98))
+
+        TestSQLite3Impl.db.insert('bar', \
+                {'id' : 1, 'heading' : 270, 'speed' : 33.3, 'signal' : 'A'})
+        
+        rows = TestSQLite3Impl.db.select('bar', {}, ('>id',))    
+
+        self.assertEqual(len(rows), 3)
+        self.assertEqual(rows[0], (99, 99, 2.4, 'Z'))
+        self.assertEqual(rows[1], (98, 98, 2.3, 'X'))
+        self.assertEqual(rows[2], (1, 270, 33.3, 'A'))
+
+        rows = TestSQLite3Impl.db.select('bar', {}, ('heading',))    
+
+        self.assertEqual(len(rows), 3)
+        self.assertEqual(rows[0], (98, 98, 2.3, 'X'))
+        self.assertEqual(rows[1], (99, 99, 2.4, 'Z'))
+        self.assertEqual(rows[2], (1, 270, 33.3, 'A'))
+
+        TestSQLite3Impl.db.insert('bar', \
+                {'id' : 2, 'heading' : 270, 'speed' : 31.3, 'signal' : 'A'})
+
+        rows = TestSQLite3Impl.db.select('bar', {}, ('<heading', 'speed'))    
+
+        self.assertEqual(len(rows), 4)
+        self.assertEqual(rows[0], (98, 98, 2.3, 'X'))
+        self.assertEqual(rows[1], (99, 99, 2.4, 'Z'))
+        self.assertEqual(rows[2], (2, 270, 31.3, 'A'))
+        self.assertEqual(rows[3], (1, 270, 33.3, 'A'))
+
+        TestSQLite3Impl.db.rollback()
+
     def test_foreign_key(self):
         TestSQLite3Impl.db.execute('pragma foreign_keys=1')
         # bar id 100 should not exist

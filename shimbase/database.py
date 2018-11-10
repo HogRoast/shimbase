@@ -21,14 +21,17 @@ class DatabaseKeys(ABC):
     An immutable abstract class to represent the primary key of a database 
     object
     '''
-    def __init__(self, fields:dict):
+    def __init__(self, fields:dict, order:tuple=None):
         '''
         Constructor for an object with the given primary key fields
 
         :param fields: a dictionary of primary key fields
+        :param order: a tuple of fields to order by, default order is asc a \
+                      field prepended with '>' or '<' signifies asc or desc
         '''
         # Need to use setattr as the class is Frozen (immutable)
         object.__setattr__(self, '_fields', fields)
+        object.__setattr__(self, '_order', order)
 
     @abstractmethod
     def getFields(self):
@@ -38,20 +41,25 @@ class DatabaseKeys(ABC):
         '''
         return self._fields
 
+    def getOrder(self):
+        return self._order
+
 @dataclass(frozen=True)
 class AdhocKeys(DatabaseKeys):
     '''
     A class to allow for adhoc selection outside of an objects primary key 
     fields
     '''
-    def __init__(self, fields:dict):
+    def __init__(self, fields:dict={}, order:tuple=None):
         '''
         Constructor for an object with the given key fields, as this is an
         adhoc key the fields need not be part of the primary key
 
         :param fields: a dictionary of primary key fields
+        :param order: a tuple of fields to order by, default order is asc a \
+                      field prepended with '>' or '<' signifies asc or desc
         '''
-        super().__init__(fields)
+        super().__init__(fields, order)
 
     def getFields(self):
         '''
@@ -97,12 +105,14 @@ class DatabaseObject(ABC):
         self._vals = values
 
     @abstractmethod
-    def _createAdhoc(self, fields:dict):
+    def _createAdhoc(self, fields:dict={}, order:tuple=None):
         '''
         Abstract instance method to create a database object with the 
         provided dictionary of fields
 
         :param keys: a dictionary of adhoc fields
+        :param order: a tuple of fields to order by, if prepended with '>' or \
+                      '<' then desc or asc
         :returns: a database object constructed via an AdhocKey of fields
         '''
         pass
@@ -199,7 +209,8 @@ class Database:
         :returns: a list of database objects constructed from the selected rows
         :raises: DatabaseInvObjError if obj is not a valid DBO
         '''
-        rows = self._impl.select(obj._table, obj._keys.getFields())
+        rows = self._impl.select(
+                obj._table, obj._keys.getFields(), obj._keys.getOrder())
         return [obj._create(r) for r in rows]
 
     @isDatabaseObject
@@ -240,16 +251,6 @@ class Database:
         Set Foreign Key checks off
         '''
         self._impl.disableForeignKeys()
-
-    def execute(self, s:str):
-        '''
-        Execute the provided SQL against the underlying DB
-
-        :param s: a SQL string
-        :returns: the list of database rows affected, potentially empty
-        :raises: DatabaseIntegrityError raised by impl if constraint is breached
-        '''
-        return self._impl.execute(s)
 
     def transaction(self):
         '''
