@@ -15,6 +15,27 @@ class SQLite3Impl(DatabaseImpl):
         self._dbname = dbname
         self._conn = connect(dbname)
 
+    def _constructWhere(self, where):
+        s = ' WHERE '
+        for k, v in where.items():
+            op = '='
+            if k[0] == '>':
+                op = '>'
+                k = k[1:]
+            elif k[0] == '<':
+                op = '<'
+                k = k[1:]
+
+            if v is None:
+                s += '{}{}NULL and '.format(k, op)
+            elif isinstance(v, str):
+                s += '{}{}"{}" and '.format(k, op, v) 
+            else:
+                s += '{}{}{} and '.format(k, op, v) 
+        # remove the extraneous ' and '
+        s = s[:-5]
+        return s
+
     def select(self, table:str, where:dict=None, order:tuple=None):
         '''
         Select from db the row(s) matching the provided fields or all rows if
@@ -29,19 +50,9 @@ class SQLite3Impl(DatabaseImpl):
         '''
         s = 'SELECT * FROM {} '.format(table)
         if where:
-            s += 'WHERE '
-            for k, v in where.items():
-                if v is None:
-                    s += '{}=NULL and '.format(k)
-                elif isinstance(v, str):
-                    s += '{}="{}" and '.format(k, v) 
-                else:
-                    s += '{}={} and '.format(k, v) 
-            # remove the extraneous ' and '
-            s = s[:-5]
-
+            s += self._constructWhere(where)
         if order:
-            s += 'ORDER BY '
+            s += ' ORDER BY '
             for o in order:
                 if len(o):
                     if o[0] == '>':
@@ -109,17 +120,8 @@ class SQLite3Impl(DatabaseImpl):
         # remove the extraneous comma
         s = s[:-1]
 
-        if where and len(where) > 0:
-            s += ' WHERE '
-            for k, v in where.items():
-                if v is None:
-                    s += '{}=NULL and '.format(k)
-                elif isinstance(v, str):
-                    s += '{}="{}" and '.format(k, v) 
-                else:
-                    s += '{}={} and '.format(k, v) 
-            # remove the extraneous ' and '
-            s = s[:-5]
+        if where:
+            s += self._constructWhere(where)
         else:
             raise DatabaseDataError('No keys provided for UPDATE')
 
@@ -134,16 +136,7 @@ class SQLite3Impl(DatabaseImpl):
         '''
         s = 'DELETE FROM {} '.format(table)
         if where:
-            s += 'WHERE '
-            for k, v in where.items():
-                if v is None:
-                    s += '{}=NULL and '.format(k, v) 
-                elif isinstance(v, str):
-                    s += '{}="{}" and '.format(k, v) 
-                else:
-                    s += '{}={} and '.format(k, v) 
-            # remove the extraneous ' and '
-            s = s[:-5]
+            s += self._constructWhere(where)
         else:
             raise DatabaseDataError('No keys provided for DELETE')
 

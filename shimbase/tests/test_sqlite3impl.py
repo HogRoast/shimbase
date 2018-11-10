@@ -52,6 +52,28 @@ class TestSQLite3Impl(TestCase):
         self.assertEqual(
                 rows[0], ('foo name TD', 'foo desc TD', 98))
 
+    def test_select_Greater(self):
+        rows = TestSQLite3Impl.db.select('foo', {'>bar_id' : 98})    
+
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0], ( \
+                'foo name TD2', 'foo desc TD2', 99))
+
+    def test_select_Less(self):
+        rows = TestSQLite3Impl.db.select('foo', {'<bar_id' : 99})    
+
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0], ( \
+                'foo name TD', 'foo desc TD', 98))
+
+    def test_select_Between(self):
+        rows = TestSQLite3Impl.db.select('foo', \
+                {'>bar_id' : 97, '<bar_id' : 99})    
+
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0], ( \
+                'foo name TD', 'foo desc TD', 98))
+
     def test_select_Ordered(self):
         rows = TestSQLite3Impl.db.select('foo', {}, ('>bar_id',))    
 
@@ -65,7 +87,7 @@ class TestSQLite3Impl(TestCase):
                 {'id' : 1, 'heading' : 270, 'speed' : 33.3, 'signal' : 'A'})
         
         rows = TestSQLite3Impl.db.select('bar', {}, ('>id',))    
-
+        print(rows)
         self.assertEqual(len(rows), 3)
         self.assertEqual(rows[0], (99, 99, 2.4, 'Z'))
         self.assertEqual(rows[1], (98, 98, 2.3, 'X'))
@@ -88,6 +110,12 @@ class TestSQLite3Impl(TestCase):
         self.assertEqual(rows[1], (99, 99, 2.4, 'Z'))
         self.assertEqual(rows[2], (2, 270, 31.3, 'A'))
         self.assertEqual(rows[3], (1, 270, 33.3, 'A'))
+
+        rows = TestSQLite3Impl.db.select('bar', \
+                {'heading' : 270, 'signal' : 'A'}, ('speed',))    
+        self.assertEqual(len(rows), 2)
+        self.assertEqual(rows[0], (2, 270, 31.3, 'A'))
+        self.assertEqual(rows[1], (1, 270, 33.3, 'A'))
 
         TestSQLite3Impl.db.rollback()
 
@@ -173,6 +201,40 @@ class TestSQLite3Impl(TestCase):
 
         TestSQLite3Impl.db.rollback()
 
+    def test_update_Greater(self):
+        TestSQLite3Impl.db.update('bar', {'heading' : 180}, {'>id' : 97})
+
+        rows = TestSQLite3Impl.db.select('bar')
+
+        self.assertEqual(len(rows), 2)
+        self.assertEqual(rows[0], (98, 180, 2.3, 'X'))
+        self.assertEqual(rows[1], (99, 180, 2.4, 'Z'))
+
+        TestSQLite3Impl.db.rollback()
+
+    def test_update_Less(self):
+        TestSQLite3Impl.db.update('bar', {'speed' : 22.2}, {'<heading' : 180})
+
+        rows = TestSQLite3Impl.db.select('bar')
+
+        self.assertEqual(len(rows), 2)
+        self.assertEqual(rows[0], (98, 98, 22.2, 'X'))
+        self.assertEqual(rows[1], (99, 99, 22.2, 'Z'))
+
+        TestSQLite3Impl.db.rollback()
+
+    def test_update_Between(self):
+        TestSQLite3Impl.db.update('bar', \
+                {'signal' : 'C'}, {'>heading' : 97, '<heading' : 99})
+
+        rows = TestSQLite3Impl.db.select('bar')
+
+        self.assertEqual(len(rows), 2)
+        self.assertEqual(rows[0], (98, 98, 2.3, 'C'))
+        self.assertEqual(rows[1], (99, 99, 2.4, 'Z'))
+
+        TestSQLite3Impl.db.rollback()
+
     def test_update_Error(self):
         with self.assertRaises(DatabaseDataError) as cm:
             TestSQLite3Impl.db.update('foo', {})
@@ -191,7 +253,7 @@ class TestSQLite3Impl(TestCase):
 
     def test_null_update(self):
         TestSQLite3Impl.db.insert('bar', \
-                {'id' : 101, 'heading' : 90, 'speed' : 60.0, 'signal' : 'A'})
+                {'id' : 101, 'heading' : 90, 'speed' : 61.0, 'signal' : 'A'})
 
         TestSQLite3Impl.db.update('bar', {'speed' : None}, {'id' : 101})
 
@@ -218,6 +280,38 @@ class TestSQLite3Impl(TestCase):
 
         rows = TestSQLite3Impl.db.select('bar', {'id' : 101})
         self.assertEqual(len(rows), 0)
+
+    def test_delete_Greater(self):
+        TestSQLite3Impl.db.insert('bar', \
+                {'id' : 101, 'heading' : 180, 'speed' : 42.0, 'signal' : 'B'})
+
+        TestSQLite3Impl.db.delete('bar', {'>heading' : 100})    
+        rows = TestSQLite3Impl.db.select('bar')
+        self.assertEqual(len(rows), 2)
+        self.assertEqual(rows[0], (98, 98, 2.3, 'X'))
+        self.assertEqual(rows[1], (99, 99, 2.4, 'Z'))
+        TestSQLite3Impl.db.rollback()
+
+    def test_delete_Less(self):
+        TestSQLite3Impl.db.insert('bar', \
+                {'id' : 101, 'heading' : 180, 'speed' : 42.0, 'signal' : 'B'})
+
+        TestSQLite3Impl.db.delete('bar', {'<heading' : 99})    
+        rows = TestSQLite3Impl.db.select('bar')
+        self.assertEqual(len(rows), 2)
+        self.assertEqual(rows[0], (99, 99, 2.4, 'Z'))
+        self.assertEqual(rows[1], (101, 180, 42.0, 'B'))
+        TestSQLite3Impl.db.rollback()
+
+    def test_delete_Between(self):
+        TestSQLite3Impl.db.insert('bar', \
+                {'id' : 101, 'heading' : 180, 'speed' : 42.0, 'signal' : 'B'})
+
+        TestSQLite3Impl.db.delete('bar', {'<heading' : 100, '>heading' : 97})
+        rows = TestSQLite3Impl.db.select('bar')
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0], (101, 180, 42.0, 'B'))
+        TestSQLite3Impl.db.rollback()
 
 if __name__ == '__main__':
     import unittest
