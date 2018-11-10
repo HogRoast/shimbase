@@ -4,7 +4,7 @@ import sys
 from setuptools import setup, find_packages
 
 NAME = "shimbase"
-VERSION = "1.0.4"
+VERSION = "1.0.5"
 
 # To install the library, run the following
 #
