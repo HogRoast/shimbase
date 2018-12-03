@@ -24,7 +24,7 @@ class {{CapTableName}}Keys(DatabaseKeys):
         
         :returns: a dictionary of all {{CapTableName}}Keys fields
         '''
-        fields = {} if not ({{PKFieldsAndSelf}}) else {{PKFieldsDictSelf}}
+        fields = {} if None in ({{PKFieldsAndSelf}},) else {{PKFieldsDictSelf}}
         return fields
         
 class {{CapTableName}}Values(DatabaseValues):

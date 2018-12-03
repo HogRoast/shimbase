@@ -72,7 +72,7 @@ def createReplacements(table, fields, schema, dataOutPath, libName=''):
     for k, v in fields.items():
         type_ = 'str' if v[0] == 'char' else v[0]
         if v[1] == True:
-            pkFieldsTyped += k + ':' + type_ +'\n'
+            pkFieldsTyped += k + ':' + type_ +' = None\n'
             pkFieldsListTyped += k + ':' + type_ + ', '
             pkFieldsAssign += \
                     "object.__setattr__(self, '" + k +"', " + k + ')\n' 
@@ -192,7 +192,7 @@ def createReplacements(table, fields, schema, dataOutPath, libName=''):
     pkFieldsDictSelf = pkFieldsDict.replace(': ', ': self.')
     pkFieldsAnd = pkFieldsAnd[:-5]
     pkFieldsAndSelf = 'self.' + pkFieldsAnd
-    pkFieldsAndSelf = pkFieldsAndSelf.replace(' and ', ' and self.')
+    pkFieldsAndSelf = pkFieldsAndSelf.replace(' and ', ', self.')
     pkTestDataList = pkTestDataList[:-2]
     pkTestDataDict = pkTestDataDict[:-2] + '}'
     valueTestDataList = valueTestDataList[:-2]

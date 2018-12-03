@@ -153,7 +153,7 @@ class SQLite3Impl(DatabaseImpl):
         curs = self._conn.cursor()
 
         try:
-            print(s)
+            # print(s)
             curs.execute(s)
         except IntegrityError as e:
             raise DatabaseIntegrityError(e.args[0])
