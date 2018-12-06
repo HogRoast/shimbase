@@ -74,6 +74,13 @@ class TestSQLite3Impl(TestCase):
         self.assertEqual(rows[0], ( \
                 'foo name TD', 'foo desc TD', 98))
 
+    def test_select_Not(self):
+        rows = TestSQLite3Impl.db.select('foo', {'!bar_id' : 99})
+
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0], ( \
+                'foo name TD', 'foo desc TD', 98))
+
     def test_select_Ordered(self):
         rows = TestSQLite3Impl.db.select('foo', {}, ('>bar_id',))    
 
@@ -235,6 +242,17 @@ class TestSQLite3Impl(TestCase):
 
         TestSQLite3Impl.db.rollback()
 
+    def test_update_Not(self):
+        TestSQLite3Impl.db.update('bar', {'signal' : 'C'}, {'!id' : 99})
+
+        rows = TestSQLite3Impl.db.select('bar')
+
+        self.assertEqual(len(rows), 2)
+        self.assertEqual(rows[0], (98, 98, 2.3, 'C'))
+        self.assertEqual(rows[1], (99, 99, 2.4, 'Z'))
+
+        TestSQLite3Impl.db.rollback()
+
     def test_update_Error(self):
         with self.assertRaises(DatabaseDataError) as cm:
             TestSQLite3Impl.db.update('foo', {})
@@ -308,6 +326,16 @@ class TestSQLite3Impl(TestCase):
                 {'id' : 101, 'heading' : 180, 'speed' : 42.0, 'signal' : 'B'})
 
         TestSQLite3Impl.db.delete('bar', {'<heading' : 100, '>heading' : 97})
+        rows = TestSQLite3Impl.db.select('bar')
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0], (101, 180, 42.0, 'B'))
+        TestSQLite3Impl.db.rollback()
+
+    def test_delete_Not(self):
+        TestSQLite3Impl.db.insert('bar', \
+                {'id' : 101, 'heading' : 180, 'speed' : 42.0, 'signal' : 'B'})
+
+        TestSQLite3Impl.db.delete('bar', {'!id' : 101})
         rows = TestSQLite3Impl.db.select('bar')
         self.assertEqual(len(rows), 1)
         self.assertEqual(rows[0], (101, 180, 42.0, 'B'))

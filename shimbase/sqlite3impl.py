@@ -25,6 +25,9 @@ class SQLite3Impl(DatabaseImpl):
             elif k[0] == '<':
                 op = '<'
                 k = k[1:]
+            elif k[0] == '!':
+                op = '!='
+                k = k[1:]
 
             if v is None:
                 s += '{}{}NULL and '.format(k, op)
